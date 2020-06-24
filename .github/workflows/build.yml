@@ -1,0 +1,67 @@
+name: build-image
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/*'
+      - 'Dockerfile'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout the code
+        uses: actions/checkout@v2
+
+      -
+        name: Dockerhub login
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin
+
+      -
+        name: Prepare
+        id: prepare
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo ::set-output name=version::${GITHUB_REF#refs/tags/}
+          else
+            echo ::set-output name=version::snapshot
+          fi
+          echo ::set-output name=build_date::v$(date -u +'%Y%m%d')
+          echo ::set-output name=docker_platforms::linux/arm/v7,linux/arm64,linux/amd64
+          echo ::set-output name=docker_image::colachen/caddy2
+      -
+        name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: latest
+          qemu-version: latest
+
+      -
+        name: Build and push docker image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          docker buildx build --platform ${{ steps.prepare.outputs.docker_platforms }} \
+          --output "type=image,push=true" \
+          --tag "${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.build_date }}" \
+          --tag "${{ steps.prepare.outputs.docker_image }}:latest" \
+          --file Dockerfile .
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      -
+        name: Test docker image
+        run: |
+          docker run --rm colachen/caddy2 caddy version

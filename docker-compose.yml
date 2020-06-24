@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  caddy:
+    container_name: caddy
+    build: .
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+      - $PWD/data:/data
+      - $PWD/config:/config
+    environment:
+      - CLOUDFLARE_API_TOKEN=123
