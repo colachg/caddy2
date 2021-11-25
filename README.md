@@ -11,6 +11,7 @@ tls {
 }
 
 ```
+Get CF_API_TOKEN: https://support.cloudflare.com/hc/en-us/articles/200167836-Managing-API-Tokens-and-Keys
 
 ## [dnspod](https://github.com/caddy-dns/dnspod)
 ```Caddyfile
@@ -18,3 +19,5 @@ tls {
   dns dnspod {env.DNSPOD_TOKEN}
 }
 ```
+Get DNSPOD_TOKEN:
+https://docs.dnspod.cn/account/5f2d466de8320f1a740d9ff3/
