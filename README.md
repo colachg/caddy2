@@ -1,3 +1,4 @@
+[![build-image](https://github.com/colachg/caddy2/actions/workflows/build.yml/badge.svg)](https://github.com/colachg/caddy2/actions/workflows/build.yml)
 # caddy2
 Caddy v2 with more dns provider plugins.
 
