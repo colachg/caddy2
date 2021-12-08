@@ -53,7 +53,7 @@ jobs:
 
       - name: Test
         run: |
-          docker run --rm  ${{ steps.meta.outputs.tags }} caddy version
+          docker run --rm  ghcr.io/colachg/caddy2:master caddy version
 
       - name: Build and push
         uses: docker/build-push-action@v2
