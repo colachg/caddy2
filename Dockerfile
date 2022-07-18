@@ -1,4 +1,4 @@
-ARG CADDY=caddy:2.5.0
+ARG CADDY=caddy:2.5.2
 
 FROM $CADDY-builder AS builder
 RUN xcaddy build \
